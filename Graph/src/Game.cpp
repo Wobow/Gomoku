@@ -5,7 +5,7 @@
 // Login   <trupin_t@epitech.net>
 // 
 // Started on Thu Dec 10 15:53:30 2015 Thomas Trupin
-// Last update Fri Dec 11 23:58:16 2015 Thomas Trupin
+// Last update Sat Dec 12 02:54:02 2015 Thomas Trupin
 //
 
 #include	"Game.hpp"
@@ -14,7 +14,7 @@
 Game::Game()
 {
   this->loadTextures();
-  _window.create(sf::VideoMode(WINDOW_W, WINDOW_H), WINDOW_NAME);
+  _window.create(sf::VideoMode(WINDOW_W, WINDOW_H), WINDOW_NAME, sf::Style::Titlebar |sf::Style::Close);
   _window.setFramerateLimit(60);
   _background.setTexture(_txmgr.getRef("background"));
   _background.setScale(

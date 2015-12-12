@@ -5,7 +5,7 @@
 // Login   <trupin_t@epitech.net>
 // 
 // Started on Thu Dec 10 15:53:45 2015 Thomas Trupin
-// Last update Sat Dec 12 00:21:07 2015 Thomas Trupin
+// Last update Sat Dec 12 02:49:37 2015 Thomas Trupin
 //
 
 #include	"GameStateStart.hpp"
@@ -45,15 +45,6 @@ void		GameStateStart::handleInput()
 	case sf::Event::Closed:
 	  {
 	    _game->_window.close();
-	    break;
-	  }
-	case sf::Event::Resized:
-	  {
-	    _view.setSize(event.size.width, event.size.height);
-	    _game->_background.setPosition(_game->_window.mapPixelToCoords(sf::Vector2i(0, 0)));
-	    _game->_background.setScale(
-	       float(event.size.width) / float(_game->_background.getTexture()->getSize().x),
-	       float(event.size.height) / float(_game->_background.getTexture()->getSize().y));
 	    break;
 	  }
 	case sf::Event::KeyPressed:
