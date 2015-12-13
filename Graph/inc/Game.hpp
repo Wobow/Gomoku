@@ -20,6 +20,7 @@
 #include	<iostream>
 #include	"TextureManager.hpp"
 #include	"Tile.hpp"
+#include	"Arbiter.hpp"
 
 #define		WINDOW_NAME	"Gomoku no desu ne"
 #define		WINDOW_W	720
@@ -27,9 +28,9 @@
 
 #define		BOARD_W		19
 #define		BOARD_H		19
-#define		TILE_W		35
-#define		TILE_H		35
-#define		BORDER		27
+#define		TILE_W		37.5
+#define		TILE_H		37.5
+#define		BORDER		5
 
 class	GameState;
 
@@ -49,11 +50,14 @@ public:
   void				loadTextures();
   void				drawMap();
 
+  Arbiter			getArbiter();
+
   std::stack<GameState*>	_states;
   sf::RenderWindow		_window;
   sf::Sprite			_background;
   TextureManager		_txmgr;
   Tile				*_map[19][19];
+  Arbiter			_arbiter;
 };
 
 #endif /*!GAME_H_*/

@@ -65,12 +65,12 @@ void		GameStateStart::handleInput()
 
 void		GameStateStart::playTurn(sf::Event event)
 {
-  int		abs = event.mouseButton.x / TILE_W - 1;
-  int		ord = event.mouseButton.y / TILE_H - 1;
+  int		abs = event.mouseButton.x / TILE_W;
+  int		ord = event.mouseButton.y / TILE_H;
 
   if (0 <= abs && abs <= BOARD_W - 1 && 0 <= ord && ord <= BOARD_H - 1)
     {
-      if (_game->_map[abs][ord]->getState() == BLANK)
+      if (_game->_map[abs][ord]->getState() == BLANK && _game->getArbiter().isMoveLegit(_turn, abs, ord))
 	{
 	  if (_turn == 1)
 	    _game->_map[abs][ord]->setState(WHITE, _game->_txmgr.getRef("white"));

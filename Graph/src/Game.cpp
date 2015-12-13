@@ -11,7 +11,8 @@
 #include	"Game.hpp"
 #include	"GameState.hpp"
 
-Game::Game()
+Game::Game() : 
+  _arbiter(this)
 {
   this->loadTextures();
   _window.create(sf::VideoMode(WINDOW_W, WINDOW_H), WINDOW_NAME, sf::Style::Titlebar |sf::Style::Close);
@@ -23,7 +24,7 @@ Game::Game()
   for (int i = 0; i != BOARD_W; i ++)
     for (int j = 0; j != BOARD_H; j++)
       _map[i][j] = new Tile(i * TILE_W + BORDER, j * TILE_H + BORDER);
-  _map[1][2]->setState(BLACK, _txmgr.getRef("black"));
+  _arbiter.setMap(_map);
 }
 
 Game::~Game()
@@ -37,6 +38,7 @@ void		Game::loadTextures()
   _txmgr.loadTexture("background", "ressources/sprites/background.png");
   _txmgr.loadTexture("white", "ressources/sprites/whitePoint.png");
   _txmgr.loadTexture("black", "ressources/sprites/blackPoint.png");
+  _txmgr.loadTexture("blank", "ressources/sprites/blank.png");
 }
 
 void		Game::pushState(GameState *state)
@@ -62,6 +64,11 @@ GameState	*Game::peekState()
   if (_states.empty())
     return (nullptr);
   return (_states.top());
+}
+
+Arbiter		Game::getArbiter()
+{
+  return (_arbiter);
 }
 
 void		Game::gameLoop()
