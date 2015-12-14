@@ -32,6 +32,7 @@ char		_turn;
 
   void		loadGame();
   void		playTurn(sf::Event event);
+  void		displayPreview(sf::Event event);
 };
 
 #endif /*!GAMESTATESTART_H_*/

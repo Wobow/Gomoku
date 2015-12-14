@@ -24,13 +24,13 @@
 
 #define		WINDOW_NAME	"Gomoku no desu ne"
 #define		WINDOW_W	720
-#define		WINDOW_H	720
+#define		WINDOW_H	794
 
 #define		BOARD_W		19
 #define		BOARD_H		19
-#define		TILE_W		37.5
-#define		TILE_H		37.5
-#define		BORDER		5
+#define		TILE_W		35.6
+#define		TILE_H		35.6
+#define		BORDER		21
 
 class	GameState;
 
@@ -51,6 +51,9 @@ public:
   void				drawMap();
 
   Arbiter			getArbiter();
+  void				captureStones(int nb, char player);
+  void				gameOver(int player);
+  
 
   std::stack<GameState*>	_states;
   sf::RenderWindow		_window;
@@ -58,6 +61,7 @@ public:
   TextureManager		_txmgr;
   Tile				*_map[19][19];
   Arbiter			_arbiter;
+  char				_captures[2];
 };
 
 #endif /*!GAME_H_*/

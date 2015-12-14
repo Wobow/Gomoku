@@ -18,7 +18,8 @@ enum		e_color
 {
   BLANK,
   WHITE,
-  BLACK
+  BLACK,
+  TRANS
 };
 
 class Tile

@@ -57,32 +57,72 @@ void		GameStateStart::handleInput()
 	  }
 	case sf::Event::MouseButtonPressed:
 	  this->playTurn(event);
+	  break;
+	case sf::Event::MouseMoved:
+	  this->displayPreview(event);
+	  break;
 	default:
 	  break;
 	}
     }
 }
 
-void		GameStateStart::playTurn(sf::Event event)
+void		GameStateStart::displayPreview(sf::Event event)
 {
-  int		abs = event.mouseButton.x / TILE_W;
-  int		ord = event.mouseButton.y / TILE_H;
+  static int	oldabs = 0;
+  static int	oldord = 0;
+  static char	oldturn = 0;
+  int		abs = (event.mouseMove.x - BORDER) / TILE_W;
+  int		ord = (event.mouseMove.y - BORDER) / TILE_H;
 
   if (0 <= abs && abs <= BOARD_W - 1 && 0 <= ord && ord <= BOARD_H - 1)
     {
-      if (_game->_map[abs][ord]->getState() == BLANK && _game->getArbiter().isMoveLegit(_turn, abs, ord))
+      if ((oldabs != abs || oldord != ord) &&
+	  _game->_map[oldabs][oldord]->getState() == TRANS && oldturn == _turn)
+	_game->_map[oldabs][oldord]->setState(BLANK, _game->_txmgr.getRef("blank"));
+      oldabs = abs;
+      oldord = ord;
+      oldturn = _turn;
+      if ((_game->_map[abs][ord]->getState() == BLANK ||
+	   _game->_map[abs][ord]->getState() == TRANS))
+	{
+	  if (_game->getArbiter().isMoveLegit(_turn, abs, ord, false))
+	    {
+	      if (_turn == 1)
+		_game->_map[abs][ord]->setState(TRANS, _game->_txmgr.getRef("whiteT"));
+	      else
+		_game->_map[abs][ord]->setState(TRANS, _game->_txmgr.getRef("blackT"));
+	    }
+	  else
+	    _game->_map[abs][ord]->setState(TRANS, _game->_txmgr.getRef("wrong"));
+	}
+    }
+}
+ 
+void		GameStateStart::playTurn(sf::Event event)
+{
+  int		abs = (event.mouseButton.x - BORDER) / TILE_W;
+  int		ord = (event.mouseButton.y - BORDER) / TILE_H;
+
+  if (0 <= abs && abs <= BOARD_W - 1 && 0 <= ord && ord <= BOARD_H - 1)
+    {
+      if ((_game->_map[abs][ord]->getState() == BLANK ||
+	   _game->_map[abs][ord]->getState() == TRANS) &&
+	  _game->getArbiter().isMoveLegit(_turn, abs, ord, true))
 	{
 	  if (_turn == 1)
 	    _game->_map[abs][ord]->setState(WHITE, _game->_txmgr.getRef("white"));
 	  else
 	    _game->_map[abs][ord]->setState(BLACK, _game->_txmgr.getRef("black"));
+	  if (_game->getArbiter().hasPentakillu(_turn, abs, ord))
+	    _game->gameOver(_turn);
 	  _turn == 1 ? _turn = 2 : _turn = 1;
 	}
     }
 }
 
-void		GameStateStart::loadGame()
-{
-  std::cout << "newGame" << std::endl;
-  //  _game->pushState(new GameStateEditor(_game));
-}
+  void		GameStateStart::loadGame()
+  {
+    std::cout << "newGame" << std::endl;
+    //  _game->pushState(new GameStateEditor(_game));
+  }

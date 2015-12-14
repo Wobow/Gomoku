@@ -15,8 +15,10 @@
 #include "Pos.hpp"
 #include <vector>
 #include <iostream>
+#include <stack>
 
 # define OTHER_PLAYER (turn == WHITE ? BLACK : WHITE)
+# define ABS(X) (X < 0 ? -X : X)
 
 class	Game;
 
@@ -28,12 +30,18 @@ public:
 
 public:
   void  setMap(Tile *(*map)[19]);
-  bool	isMoveLegit(char turn, int posX, int poxY);
+  bool	isMoveLegit(char turn, int posX, int poxY, bool canEat);
+  bool	hasPentakillu(char turn, int posX, int posY);
 
 private:
-  bool isSuicidal(char turn, int posX, int poxY, std::vector<Pos>* pos);
-  bool	isEating(char turn, int posX, int posY, int dX, int dY);
-  void	removePawns(std::vector<Pos>*);
+  int	isEating(char turn, int posX, int posY, int dX, int dY);
+  void	removePawns(int, int);
+  std::vector<Pos*> *findThree(char turn, int posX, int posY, int dX, int dY, bool);
+  void	eat(char turn, int posX, int posY);
+  bool	checkDoubleThree(char turn, int posX, int posY, bool, int , int);
+  bool	containsADoubleThree(char turn, std::vector<Pos*>*, int j, int k);
+  bool	wereItSoEasy(char turn, std::vector<Pos*>*);
+  std::vector<Pos*> *findPenta(char turn, int posX, int posY, int dX, int dY);
 
 private:
   Tile	*(*_map)[19];  
