@@ -22,3 +22,16 @@ sf::Texture	&TextureManager::getRef(const std::string texture)
 {
   return (_textures.at(texture));
 }
+
+void		TextureManager::loadFont(std::string const &filename)
+{
+  sf::Font      font;
+
+  font.loadFromFile(filename);
+  _font = font;
+}
+
+sf::Font	&TextureManager::getFont()
+{
+  return (_font);
+}

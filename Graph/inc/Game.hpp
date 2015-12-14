@@ -49,11 +49,12 @@ public:
   void				gameLoop();
   void				loadTextures();
   void				drawMap();
+  void				drawOver();
 
   Arbiter			getArbiter();
   void				captureStones(int nb, char player);
   void				gameOver(int player);
-  
+  void				resetMap();
 
   std::stack<GameState*>	_states;
   sf::RenderWindow		_window;
@@ -62,6 +63,7 @@ public:
   Tile				*_map[19][19];
   Arbiter			_arbiter;
   char				_captures[2];
+  int				_isOver;
 };
 
 #endif /*!GAME_H_*/

@@ -42,6 +42,8 @@ private:
   bool	containsADoubleThree(char turn, std::vector<Pos*>*, int j, int k);
   bool	wereItSoEasy(char turn, std::vector<Pos*>*);
   std::vector<Pos*> *findPenta(char turn, int posX, int posY, int dX, int dY);
+  bool  isPairEatable(char turn, Pos *pos, int i, int j);
+  bool  isEatable(char turn, Pos *pos);
 
 private:
   Tile	*(*_map)[19];  

@@ -10,6 +10,7 @@
 
 #include	"Game.hpp"
 #include	"GameState.hpp"
+#include	"GameStateOver.hpp"
 
 Game::Game() : 
   _arbiter(this)
@@ -35,6 +36,15 @@ Game::~Game()
     popState();
 }
 
+void	Game::resetMap()
+{
+  for (int i = 0; i != BOARD_W; i ++)
+    for (int j = 0; j != BOARD_H; j++)
+      _map[i][j]->setState(BLANK, _txmgr.getRef("blank"));
+  _captures[0] = 0;
+  _captures[1] = 0;
+}
+
 void		Game::loadTextures()
 {
   _txmgr.loadTexture("background", "ressources/sprites/background.png");
@@ -44,6 +54,7 @@ void		Game::loadTextures()
   _txmgr.loadTexture("whiteT", "ressources/sprites/whitePointTrans.png");
   _txmgr.loadTexture("blackT", "ressources/sprites/blackPointTrans.png");
   _txmgr.loadTexture("wrong", "ressources/sprites/wrong.png");
+  _txmgr.loadFont("ressources/fonts/arial.ttf");
 }
 
 void		Game::pushState(GameState *state)
@@ -53,7 +64,6 @@ void		Game::pushState(GameState *state)
 
 void		Game::popState()
 {
-  delete _states.top();
   _states.pop();
 }
 
@@ -78,7 +88,8 @@ Arbiter		Game::getArbiter()
 
 void		Game::gameOver(int player)
 {
-  std::cout << "Player " << player << " has won" << std::endl;
+  _isOver = player;
+  changeState(new GameStateOver(this));
 }
 
 void		Game::captureStones(int nb, char player)
@@ -112,4 +123,42 @@ void		Game::drawMap()
   for (int i = 0; i != BOARD_W; i++)
       for (int j = 0; j != BOARD_H; j++)
 	_map[i][j]->draw(_window);
+
+  sf::Text cpWhite;
+  sf::Text cpBlack;
+  sf::Color grey(31, 31, 31);
+  sf::Color white(221, 221, 221);
+  cpWhite.setFont(_txmgr.getFont());
+  cpWhite.setString(std::to_string(_captures[WHITE - 1]));
+  cpWhite.setColor(grey);
+  cpWhite.setCharacterSize(50);
+  cpWhite.setPosition(650, 725);
+  cpBlack.setFont(_txmgr.getFont());
+  cpBlack.setString(std::to_string(_captures[BLACK - 1]));
+  cpBlack.setColor(white);
+  cpBlack.setCharacterSize(50);
+  cpBlack.setPosition(50, 725);
+  _window.draw(cpWhite);
+  _window.draw(cpBlack);
+}
+
+void		Game::drawOver()
+{
+  sf::RectangleShape rect(sf::Vector2f(WINDOW_W, WINDOW_H));
+  rect.setFillColor(sf::Color(0, 0, 0, 100));
+  _window.draw(rect);
+  sf::Text gameOver;
+  sf::Text playAgain;
+  gameOver.setFont(_txmgr.getFont());
+  gameOver.setString("Player " + std::to_string(_isOver) + " won");
+  gameOver.setColor(sf::Color(221, 221, 221));
+  gameOver.setCharacterSize(50);
+  gameOver.setPosition(250, 300);
+  playAgain.setFont(_txmgr.getFont());
+  playAgain.setString("Press space to play again");
+  playAgain.setColor(sf::Color(221, 221, 221));
+  playAgain.setCharacterSize(30);
+  playAgain.setPosition(250, 360);
+  _window.draw(gameOver);
+  _window.draw(playAgain);
 }

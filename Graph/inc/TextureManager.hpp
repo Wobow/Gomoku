@@ -12,6 +12,7 @@
 # define TEXTUREMANAGER_H_
 
 #include	<SFML/Graphics.hpp>
+#include	<SFML/Graphics/Font.hpp>
 #include	<string>
 #include	<map>
 
@@ -22,10 +23,13 @@ public:
 
   void		loadTexture(std::string const &name, std::string const &filename);
   sf::Texture	&getRef(const std::string texture);
+void	        loadFont(std::string const &filename);
+sf::Font	&getFont();
 
 
 private:
   std::map<std::string, sf::Texture> _textures;
+sf::Font	_font;
 };
 
 #endif /*!TEXTUREMANAGER_H_*/

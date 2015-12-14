@@ -156,8 +156,50 @@ std::vector<Pos*>	*Arbiter::findPenta(char turn, int posX, int posY, int dX, int
   return (out);
 }
 
+bool	Arbiter::isPairEatable(char turn, Pos *pos, int i, int j)
+{
+  int	c = 0;
+
+  if (_map[pos->x + i][pos->y + j]->getState() == turn)
+    c++;
+  if (_map[pos->x - i][pos->y - j]->getState() == turn)
+    c++;
+  if (c == 1) {
+    if (_map[pos->x +  i][pos->y + j]->getState() == turn &&
+	pos->x + 2 * i >= 0 && pos->y + 2 * j &&
+	_map[pos->x + 2 * i][pos->y + 2 * j]->getState() != turn)
+      return (true);
+    else if (_map[pos->x - i][pos->y - j]->getState() == turn &&
+	pos->x - 2 * i >= 0 && pos->y - 2 * j &&
+	_map[pos->x - 2 * i][pos->y  - 2 * j]->getState() != turn)
+      return (true);
+  }
+  return (false);
+}
+
+bool	Arbiter::isEatable(char turn, Pos *pos)
+{
+  for (int i = -1; i < 2; i++)
+    {
+      for (int j = -1; j < 2; j++)
+	{
+	  if (pos->x + i >= 0 && pos->x + i < 19 && pos->y + j >= 0 && pos->y + j < 19)
+	    {
+	      if (isPairEatable(turn, pos, i, j))
+		return (true);
+	    }
+	}
+    }
+  return (false);
+}
+
 bool	Arbiter::wereItSoEasy(char turn, std::vector<Pos*> *chain)
 {
+  for (Pos *p : *chain)
+    {
+      if (isEatable(turn, p))
+	return (true);
+    }
   return (false);
 }
 

@@ -18,6 +18,7 @@ GameStateStart::GameStateStart(Game *game)
   pos *= 0.5f;
   _view.setCenter(pos);
   _turn = DEFAULT_TURN;
+  _game->resetMap();
 }
 
 void		GameStateStart::draw(const float dt)
@@ -114,8 +115,18 @@ void		GameStateStart::playTurn(sf::Event event)
 	    _game->_map[abs][ord]->setState(WHITE, _game->_txmgr.getRef("white"));
 	  else
 	    _game->_map[abs][ord]->setState(BLACK, _game->_txmgr.getRef("black"));
-	  if (_game->getArbiter().hasPentakillu(_turn, abs, ord))
-	    _game->gameOver(_turn);
+	  for (int x = 0; x < 19; x++)
+	    {
+	      for (int y = 0; y < 19; y++)
+		{
+		  if (_game->_map[x][y]->getState() != BLANK &&
+		      _game->getArbiter().hasPentakillu(_turn, x, y))
+		    {
+		      _game->gameOver(_turn);
+		      return ;
+		    }
+		}
+	    }
 	  _turn == 1 ? _turn = 2 : _turn = 1;
 	}
     }
