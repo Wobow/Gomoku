@@ -21,6 +21,7 @@ GLEW_INC_DIR =	glew-1.10.0/include/
 GR_SRCS =	$(GR_SRC_DIR)main.cpp \
 		$(GR_SRC_DIR)GameStateStart.cpp \
 		$(GR_SRC_DIR)GameStateOver.cpp \
+		$(GR_SRC_DIR)GameStateMenu.cpp \
 		$(GR_SRC_DIR)Game.cpp \
 		$(GR_SRC_DIR)TextureManager.cpp \
 		$(GR_SRC_DIR)Tile.cpp \

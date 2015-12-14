@@ -51,7 +51,8 @@ std::vector<Pos*>	*Arbiter::findThree(char turn, int posX, int posY, int dX, int
   int			nb = 0;
   std::vector<Pos*>	*out = NULL;
 
-  if (posX < 0 || posX >= 19 || posY < 0 || posY >= 19 || posX + 5 * dX < 0 || posX + 5 * dX >= 19 || posY + 5 * dY < 0 || posY + 5 * dY >= 19)
+  if (posX < 0 || posX >= 19 || posY < 0 || posY >= 19 || posX + 5 * dX < 0 || posX + 5 * dX >= 19 || posY + 5 * dY < 0 || posY + 5 * dY >= 19 ||
+      posX - 5 * dX < 0 || posX - 5 * dX >= 19 || posY - 5 * dY < 0 || posY - 5 * dY >= 19)
     return (NULL);
   for (int i = 0; i < 5; i++)
     {
@@ -113,7 +114,7 @@ bool			Arbiter::checkDoubleThree(char turn, int posX, int posY, bool returnIfFou
 	    {
 	      if ((j != 0 || (j == 0 && k != 0)) && (!returnIfFound || !(exj == j && exk == k)))
 		{
-		  if ((th = findThree(turn, posX + i * j, posY + i * k, j, k, !returnIfFound)) != NULL)
+		  if (((th = findThree(turn, posX + i * j, posY + i * k, j, k, (!returnIfFound))) != NULL))
 		    {
 		      if (returnIfFound || containsADoubleThree(turn, th, j, k))
 			{
@@ -160,18 +161,24 @@ bool	Arbiter::isPairEatable(char turn, Pos *pos, int i, int j)
 {
   int	c = 0;
 
-  if (_map[pos->x + i][pos->y + j]->getState() == turn)
+  if (pos->x + i >= 0 && pos->x + i < 19 && pos->y + j >= 0 && pos->y + j < 19 &&
+      (_map[pos->x + i][pos->y + j]->getState() == turn))
     c++;
-  if (_map[pos->x - i][pos->y - j]->getState() == turn)
+  if (pos->x - i >= 0 && pos->x - i < 19 && pos->y - j >= 0 && pos->y - j < 19 &&
+      (_map[pos->x - i][pos->y - j]->getState() == turn))
     c++;
-  if (c == 1) {
-    if (_map[pos->x +  i][pos->y + j]->getState() == turn &&
+  if (c == 1){
+    if (pos->x + 2 * i >= 0 && pos->y + 2 * j >= 0 &&
+	pos->x + 2 * i < 19 && pos->y + 2 * j < 19 &&
+	_map[pos->x +  i][pos->y + j]->getState() == turn &&
 	pos->x + 2 * i >= 0 && pos->y + 2 * j &&
 	_map[pos->x + 2 * i][pos->y + 2 * j]->getState() != turn)
       return (true);
-    else if (_map[pos->x - i][pos->y - j]->getState() == turn &&
-	pos->x - 2 * i >= 0 && pos->y - 2 * j &&
-	_map[pos->x - 2 * i][pos->y  - 2 * j]->getState() != turn)
+    else if (pos->x - 2 * i >= 0 && pos->y - 2 * j >= 0 &&
+	     pos->x - 2 * i < 19 && pos->y - 2 * j < 19 &&
+	     _map[pos->x - i][pos->y - j]->getState() == turn &&
+	     pos->x - 2 * i >= 0 && pos->y - 2 * j &&
+	     _map[pos->x - 2 * i][pos->y  - 2 * j]->getState() != turn)
       return (true);
   }
   return (false);
@@ -183,10 +190,11 @@ bool	Arbiter::isEatable(char turn, Pos *pos)
     {
       for (int j = -1; j < 2; j++)
 	{
-	  if (pos->x + i >= 0 && pos->x + i < 19 && pos->y + j >= 0 && pos->y + j < 19)
+
 	    {
-	      if (isPairEatable(turn, pos, i, j))
+	      if (isPairEatable(turn, pos, i, j)) {
 		return (true);
+	      }
 	    }
 	}
     }
@@ -206,7 +214,7 @@ bool	Arbiter::wereItSoEasy(char turn, std::vector<Pos*> *chain)
 bool	Arbiter::hasPentakillu(char turn, int posX, int posY)
 {
   std::vector<Pos*>	*th;
-
+ 
   for (int j = -1; j < 2; j++)
     {
       for (int k = -1; k < 2; k++)
@@ -216,7 +224,7 @@ bool	Arbiter::hasPentakillu(char turn, int posX, int posY)
 	      if (!(j == 0 && k == 0) &&
 		  (th = findPenta(turn, posX + i * j, posY + i * k, j, k)) != NULL)
 		{		 
-		  if (wereItSoEasy(turn, th))
+		  if (_game->_pentakillu && wereItSoEasy(turn, th))
 		    {
 		      delete (th);
 		      return (false);
@@ -232,7 +240,7 @@ bool	Arbiter::hasPentakillu(char turn, int posX, int posY)
 
 bool	Arbiter::isMoveLegit(char turn, int posX, int posY, bool canEat)
 {
-  if (checkDoubleThree(turn, posX, posY, false, 0, 0))
+  if (_game->_doubleThreeRule && checkDoubleThree(turn, posX, posY, false, 0, 0))
     return (false);
   if (canEat)
     eat(turn, posX, posY);

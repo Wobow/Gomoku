@@ -9,13 +9,13 @@
 //
 
 #include	"Game.hpp"
-#include	"GameStateStart.hpp"
+#include	"GameStateMenu.hpp"
 
 int main()
 {
   Game		game;
 
-  game.pushState(new GameStateStart(&game));
+  game.pushState(new GameStateMenu(&game));
   game.gameLoop();
   return (EXIT_SUCCESS);
 }

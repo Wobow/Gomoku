@@ -8,6 +8,7 @@
 // Last update Sat Dec 12 02:49:37 2015 Thomas Trupin
 //
 
+#include	"GameStateMenu.hpp"
 #include	"GameStateStart.hpp"
 
 GameStateStart::GameStateStart(Game *game)
@@ -28,6 +29,7 @@ void		GameStateStart::draw(const float dt)
   _game->_window.clear(sf::Color::Black);
   _game->_window.draw(_game->_background);
   _game->drawMap();
+  _game->drawCurrentPlayer(_turn);
 }
 
 void		GameStateStart::update(const float dt)
@@ -51,7 +53,13 @@ void		GameStateStart::handleInput()
 	case sf::Event::KeyPressed:
 	  {
 	    if (event.key.code == sf::Keyboard::Escape)
-	      _game->_window.close();
+	      _game->changeState(new GameStateMenu(_game));
+	    else if (event.key.code == sf::Keyboard::Num3 ||
+		     event.key.code == sf::Keyboard::Numpad3)
+	      _game->_doubleThreeRule = !_game->_doubleThreeRule;
+	    else if (event.key.code == sf::Keyboard::Num5 ||
+		     event.key.code == sf::Keyboard::Numpad5)
+	      _game->_pentakillu = !_game->_pentakillu;
 	    else if (event.key.code == sf::Keyboard::Space)
 	      loadGame();
 	    break;

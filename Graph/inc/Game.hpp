@@ -50,6 +50,8 @@ public:
   void				loadTextures();
   void				drawMap();
   void				drawOver();
+  void				drawCurrentPlayer(int pl);
+  void				drawMenu();
 
   Arbiter			getArbiter();
   void				captureStones(int nb, char player);
@@ -64,6 +66,9 @@ public:
   Arbiter			_arbiter;
   char				_captures[2];
   int				_isOver;
+  bool				_doubleThreeRule;
+  bool				_pentakillu;
+
 };
 
 #endif /*!GAME_H_*/

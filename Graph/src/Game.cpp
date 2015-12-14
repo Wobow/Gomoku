@@ -28,6 +28,8 @@ Game::Game() :
   _arbiter.setMap(_map);
   _captures[0] = 0;
   _captures[1] = 0;
+  _doubleThreeRule = true;
+  _pentakillu = true;
 }
 
 Game::~Game()
@@ -123,9 +125,10 @@ void		Game::drawMap()
   for (int i = 0; i != BOARD_W; i++)
       for (int j = 0; j != BOARD_H; j++)
 	_map[i][j]->draw(_window);
-
   sf::Text cpWhite;
   sf::Text cpBlack;
+  sf::Text opt1;
+  sf::Text opt2;
   sf::Color grey(31, 31, 31);
   sf::Color white(221, 221, 221);
   cpWhite.setFont(_txmgr.getFont());
@@ -133,13 +136,29 @@ void		Game::drawMap()
   cpWhite.setColor(grey);
   cpWhite.setCharacterSize(50);
   cpWhite.setPosition(650, 725);
+
   cpBlack.setFont(_txmgr.getFont());
   cpBlack.setString(std::to_string(_captures[BLACK - 1]));
   cpBlack.setColor(white);
   cpBlack.setCharacterSize(50);
   cpBlack.setPosition(50, 725);
+
+  opt1.setFont(_txmgr.getFont());
+  opt1.setString("5");
+  opt1.setColor(_pentakillu ? sf::Color::Red : sf::Color::Black);
+  opt1.setCharacterSize(20);
+  opt1.setPosition(355, 730);
+
+  opt2.setFont(_txmgr.getFont());
+  opt2.setString("3");
+  opt2.setColor(_doubleThreeRule ? sf::Color::Red : sf::Color::Black);
+  opt2.setCharacterSize(20);
+  opt2.setPosition(355, 760);
+
   _window.draw(cpWhite);
   _window.draw(cpBlack);
+  _window.draw(opt1);
+  _window.draw(opt2);
 }
 
 void		Game::drawOver()
@@ -161,4 +180,44 @@ void		Game::drawOver()
   playAgain.setPosition(250, 360);
   _window.draw(gameOver);
   _window.draw(playAgain);
+}
+
+void	Game::drawMenu()
+{
+  sf::RectangleShape rect(sf::Vector2f(WINDOW_W, WINDOW_H));
+  rect.setFillColor(sf::Color(0, 0, 0, 150));
+  _window.draw(rect);
+  sf::Text title;
+  sf::Text opt1;
+  sf::Text opt2;
+  title.setFont(_txmgr.getFont());
+  title.setString("Gomoku no desu ne");
+  title.setColor(sf::Color(221, 221, 221));
+  title.setCharacterSize(50);
+  title.setPosition(150, 300);
+  opt1.setFont(_txmgr.getFont());
+  opt1.setString("1 - Player vs. player");
+  opt1.setColor(sf::Color(221, 221, 221));
+  opt1.setCharacterSize(30);
+  opt1.setPosition(200, 360);
+  opt2.setFont(_txmgr.getFont());
+  opt2.setString("2 - Player vs. IA.");
+  opt2.setColor(sf::Color(221, 221, 221));
+  opt2.setCharacterSize(30);
+  opt2.setPosition(200, 400);
+  _window.draw(title);
+  _window.draw(opt1);  
+  _window.draw(opt2);  
+}
+
+void		Game::drawCurrentPlayer(int pl)
+{
+  sf::RectangleShape rect(sf::Vector2f(320, 2));
+  rect.setFillColor(sf::Color(255, 237, 46));
+  if (pl == 2)
+    rect.setPosition(25, 730);
+  else
+    rect.setPosition(380, 730);
+  _window.draw(rect);
+  
 }
