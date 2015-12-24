@@ -18,13 +18,10 @@ Game::Game() :
   this->loadTextures();
   _window.create(sf::VideoMode(WINDOW_W, WINDOW_H), WINDOW_NAME, sf::Style::Titlebar |sf::Style::Close);
   _window.setFramerateLimit(60);
-  _background.setTexture(_txmgr.getRef("background"));
-  _background.setScale(
-		       float(WINDOW_W) / float(_background.getTexture()->getSize().x),
-		       float(WINDOW_H) / float(_background.getTexture()->getSize().y));
+  setBackground("base_menu");
   for (int i = 0; i != BOARD_W; i ++)
     for (int j = 0; j != BOARD_H; j++)
-      _map[i][j] = new Tile(i * TILE_W + BORDER, j * TILE_H + BORDER);
+      _map[i][j] = new Tile(i * TILE_W + BORDER_W, j * TILE_H + BORDER_H);
   _arbiter.setMap(_map);
   _captures[0] = 0;
   _captures[1] = 0;
@@ -36,6 +33,14 @@ Game::~Game()
 {
   while (!_states.empty())
     popState();
+}
+
+void	Game::setBackground(const std::string name)
+{
+  _background.setTexture(_txmgr.getRef(name));
+  _background.setScale(
+		       float(WINDOW_W) / float(_background.getTexture()->getSize().x),
+		       float(WINDOW_H) / float(_background.getTexture()->getSize().y));
 }
 
 void	Game::resetMap()
@@ -50,12 +55,20 @@ void	Game::resetMap()
 void		Game::loadTextures()
 {
   _txmgr.loadTexture("background", "ressources/sprites/background.png");
+
+  _txmgr.loadTexture("base_menu", "ressources/sprites/base_menu.png");
+  _txmgr.loadTexture("load", "ressources/sprites/load.png");
+  _txmgr.loadTexture("play", "ressources/sprites/play.png");
+  _txmgr.loadTexture("exit", "ressources/sprites/exit.png");
+  _txmgr.loadTexture("options", "ressources/sprites/options.png");
+
   _txmgr.loadTexture("white", "ressources/sprites/whitePoint.png");
   _txmgr.loadTexture("black", "ressources/sprites/blackPoint.png");
   _txmgr.loadTexture("blank", "ressources/sprites/blank.png");
   _txmgr.loadTexture("whiteT", "ressources/sprites/whitePointTrans.png");
   _txmgr.loadTexture("blackT", "ressources/sprites/blackPointTrans.png");
   _txmgr.loadTexture("wrong", "ressources/sprites/wrong.png");
+
   _txmgr.loadFont("ressources/fonts/arial.ttf");
 }
 
@@ -182,32 +195,33 @@ void		Game::drawOver()
   _window.draw(playAgain);
 }
 
-void	Game::drawMenu()
+void		Game::drawMenu(e_menu selected)
 {
-  sf::RectangleShape rect(sf::Vector2f(WINDOW_W, WINDOW_H));
-  rect.setFillColor(sf::Color(0, 0, 0, 150));
-  _window.draw(rect);
-  sf::Text title;
-  sf::Text opt1;
-  sf::Text opt2;
-  title.setFont(_txmgr.getFont());
-  title.setString("Gomoku no desu ne");
-  title.setColor(sf::Color(221, 221, 221));
-  title.setCharacterSize(50);
-  title.setPosition(150, 300);
-  opt1.setFont(_txmgr.getFont());
-  opt1.setString("1 - Player vs. player");
-  opt1.setColor(sf::Color(221, 221, 221));
-  opt1.setCharacterSize(30);
-  opt1.setPosition(200, 360);
-  opt2.setFont(_txmgr.getFont());
-  opt2.setString("2 - Player vs. IA.");
-  opt2.setColor(sf::Color(221, 221, 221));
-  opt2.setCharacterSize(30);
-  opt2.setPosition(200, 400);
-  _window.draw(title);
-  _window.draw(opt1);  
-  _window.draw(opt2);  
+  sf::Sprite	play;
+  sf::Sprite	options;
+  sf::Sprite    load;
+  sf::Sprite	exit;
+
+  play.setPosition(410, 239);
+  play.setTexture(_txmgr.getRef("play"));
+  if (selected != M_PLAY)
+    play.setColor(sf::Color(255, 255, 255, 100));
+  load.setPosition(410, 352);
+  load.setTexture(_txmgr.getRef("load"));
+  if (selected != M_LOAD)
+    load.setColor(sf::Color(255, 255, 255, 100));
+  options.setPosition(410, 465);
+  options.setTexture(_txmgr.getRef("options"));
+  if (selected != M_OPTIONS)
+    options.setColor(sf::Color(255, 255, 255, 100));
+  exit.setPosition(410, 575);
+  exit.setTexture(_txmgr.getRef("exit"));
+  if (selected != M_EXIT)
+    exit.setColor(sf::Color(255, 255, 255, 100));
+  _window.draw(play);
+  _window.draw(load);
+  _window.draw(exit);
+  _window.draw(options);
 }
 
 void		Game::drawCurrentPlayer(int pl)

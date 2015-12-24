@@ -13,10 +13,12 @@
 GameStateMenu::GameStateMenu(Game *game)
 {
   _game = game;
+  _game->setBackground("base_menu");
   sf::Vector2f pos = sf::Vector2f(_game->_window.getSize());
   _view.setSize(pos);
   pos *= 0.5f;
   _view.setCenter(pos);
+  _selected = M_PLAY;
 }
 
 void		GameStateMenu::draw(const float dt)
@@ -25,8 +27,7 @@ void		GameStateMenu::draw(const float dt)
   _game->_window.setView(_view);
   _game->_window.clear(sf::Color::Black);
   _game->_window.draw(_game->_background);
-  _game->drawMap();
-  _game->drawMenu();
+  _game->drawMenu(_selected);
 }
 
 void	        GameStateMenu::update(const float dt)
@@ -51,12 +52,79 @@ void	        GameStateMenu::handleInput()
 	  {
 	    if (event.key.code == sf::Keyboard::Escape)
 	      _game->_window.close();
-	    else if (event.key.code == sf::Keyboard::Space)
-	      _game->changeState(new GameStateStart(_game));
+	    else if (event.key.code == sf::Keyboard::Down)
+	      rotate_down();
+	    else if (event.key.code == sf::Keyboard::Up)
+	      rotate_up();
+	    else if (event.key.code == sf::Keyboard::Return)
+	      launch();
+	    break;
+	  }
+	case sf::Event::MouseMoved:
+	  {
+	    moveToCursor(event);
+	    break;
+	  }
+	case sf::Event::MouseButtonPressed:
+	  {
+	    launch();
 	    break;
 	  }
 	default:
 	  break;
 	}
+    }
+}
+
+void	GameStateMenu::moveToCursor(sf::Event event)
+{
+  std::vector<Pos*> pos;
+
+  pos.push_back(new Pos(239, 352));
+  pos.push_back(new Pos(352, 465));
+  pos.push_back(new Pos(465, 575));
+  pos.push_back(new Pos(575, 685));
+  int i = 0;
+  for (Pos *p : pos)
+    {
+      if (event.mouseMove.x > 410 && event.mouseMove.x <= 600 &&
+	  event.mouseMove.y > p->x && event.mouseMove.y < p->y)
+	_selected = (e_menu)i;
+      i++;
+    }
+}
+
+void	GameStateMenu::rotate_down()
+{
+  if (_selected != M_EXIT)
+    _selected = (e_menu)((int)_selected + 1);
+  else
+    _selected = M_PLAY;
+}
+
+void	GameStateMenu::rotate_up()
+{
+  if (_selected != M_PLAY)
+    _selected = (e_menu)((int)_selected - 1);
+  else
+    _selected = M_EXIT;
+}
+
+void	GameStateMenu::launch()
+{
+  switch (_selected)
+    {
+    case M_PLAY:
+      _game->changeState(new GameStateStart(_game));
+      break;
+    case M_OPTIONS:
+      // GameStateOptions
+      break;
+    case M_LOAD:
+      // GameStateLoad
+      break;
+    case M_EXIT:
+      _game->_window.close();
+      break;
     }
 }

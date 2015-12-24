@@ -24,7 +24,13 @@ public:
   virtual void	handleInput();
 
 private:
-  sf::View	_view;
+  void	rotate_down();
+  void	rotate_up();
+  void	launch();
+  void	moveToCursor(sf::Event);
 
+private:
+  sf::View	_view;
+  e_menu	_selected;
 };
 

@@ -23,14 +23,22 @@
 #include	"Arbiter.hpp"
 
 #define		WINDOW_NAME	"Gomoku no desu ne"
-#define		WINDOW_W	720
-#define		WINDOW_H	794
+#define		WINDOW_W	1210
+#define		WINDOW_H	700
 
 #define		BOARD_W		19
 #define		BOARD_H		19
-#define		TILE_W		35.6
-#define		TILE_H		35.6
-#define		BORDER		21
+#define		TILE_W		36.4
+#define		TILE_H		36.4
+#define		BORDER_W	260
+#define		BORDER_H	7
+
+typedef enum	e_menu {
+  M_PLAY,
+  M_LOAD,
+  M_OPTIONS,
+  M_EXIT
+}		e_menu;
 
 class	GameState;
 
@@ -51,12 +59,13 @@ public:
   void				drawMap();
   void				drawOver();
   void				drawCurrentPlayer(int pl);
-  void				drawMenu();
+  void				drawMenu(e_menu selected);
 
   Arbiter			getArbiter();
   void				captureStones(int nb, char player);
   void				gameOver(int player);
   void				resetMap();
+  void				setBackground(const std::string name);
 
   std::stack<GameState*>	_states;
   sf::RenderWindow		_window;

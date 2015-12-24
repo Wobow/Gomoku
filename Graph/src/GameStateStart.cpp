@@ -19,6 +19,7 @@ GameStateStart::GameStateStart(Game *game)
   pos *= 0.5f;
   _view.setCenter(pos);
   _turn = DEFAULT_TURN;
+  _game->setBackground("background");
   _game->resetMap();
 }
 
@@ -81,8 +82,8 @@ void		GameStateStart::displayPreview(sf::Event event)
   static int	oldabs = 0;
   static int	oldord = 0;
   static char	oldturn = 0;
-  int		abs = (event.mouseMove.x - BORDER) / TILE_W;
-  int		ord = (event.mouseMove.y - BORDER) / TILE_H;
+  int		abs = (event.mouseMove.x - BORDER_W) / TILE_W;
+  int		ord = (event.mouseMove.y - BORDER_H) / TILE_H;
 
   if (0 <= abs && abs <= BOARD_W - 1 && 0 <= ord && ord <= BOARD_H - 1)
     {
@@ -110,8 +111,8 @@ void		GameStateStart::displayPreview(sf::Event event)
  
 void		GameStateStart::playTurn(sf::Event event)
 {
-  int		abs = (event.mouseButton.x - BORDER) / TILE_W;
-  int		ord = (event.mouseButton.y - BORDER) / TILE_H;
+  int		abs = (event.mouseButton.x - BORDER_W) / TILE_W;
+  int		ord = (event.mouseButton.y - BORDER_H) / TILE_H;
 
   if (0 <= abs && abs <= BOARD_W - 1 && 0 <= ord && ord <= BOARD_H - 1)
     {
