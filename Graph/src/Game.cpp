@@ -145,10 +145,10 @@ void		Game::drawMap()
   sf::Color grey(31, 31, 31);
   sf::Color white(221, 221, 221);
   cpWhite.setFont(_txmgr.getFont());
-  cpWhite.setString(std::to_string(_captures[WHITE - 1]));
+  cpWhite.setString("lol");
   cpWhite.setColor(grey);
   cpWhite.setCharacterSize(50);
-  cpWhite.setPosition(650, 725);
+  cpWhite.setPosition(0, 0);
 
   cpBlack.setFont(_txmgr.getFont());
   cpBlack.setString(std::to_string(_captures[BLACK - 1]));
@@ -232,6 +232,5 @@ void		Game::drawCurrentPlayer(int pl)
     rect.setPosition(25, 730);
   else
     rect.setPosition(380, 730);
-  _window.draw(rect);
-  
+  _window.draw(rect);  
 }
