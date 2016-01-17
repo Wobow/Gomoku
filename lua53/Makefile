@@ -5,25 +5,25 @@
 ## Login   <bevill_a@epitech.net>
 ## 
 ## Started on  Sun Jan 17 11:31:27 2016 Alexis Bevillard
-## Last update Sun Jan 17 11:33:47 2016 Alexis Bevillard
+## Last update Sun Jan 17 15:09:36 2016 Alexis Bevillard
 ##
 
 NAME =		test_lua
 
-GR_SRC_DIR =	src/
-GOBJ_DIR =	objs/
-GR_INC_DIR =	inc/
+SRC_DIR =	src/
+OBJ_DIR =	objs/
+INC_DIR =	inc/
 LUA_LIB_DIR =	lua-5.3.2/lib/
 LUA_INC_DIR =	lua-5.3.2/include/
 
-GR_SRCS =	$(GR_SRC_DIR)test.cpp \
+SRCS =		$(SRC_DIR)test.cpp \
 
-GR_OBJS =	$(patsubst $(GR_SRC_DIR)%, $(GOBJ_DIR)%, $(GR_SRCS:.cpp=.o))
+OBJS =		$(patsubst $(SRC_DIR)%, $(OBJ_DIR)%, $(SRCS:.cpp=.o))
 
-CPPFLAGS +=	-I$(LUA_INC_DIR)
+CPPFLAGS +=	-I$(LUA_INC_DIR) -I$(INC_DIR)
 CPPFLAGS +=	-O3 -Wall -Wextra -W -g3 -std=c++11
 
-GR_LDFLAGS +=	-L$(LUA_LIB_DIR) -llua53
+LDFLAGS +=	-L$(LUA_LIB_DIR) -llua53
 
 CPP_COMPILE =	g++ -c
 CPP_LINK =	g++ -o
@@ -35,18 +35,18 @@ CP =		cp
 
 all:		$(NAME)
 
-$(GOBJ_DIR)%.o:	$(GR_SRC_DIR)%.cpp
+$(OBJ_DIR)%.o:	$(SRC_DIR)%.cpp
 		@$(MKDIR) $(dir $@)
 		@$(CPP_COMPILE) $< $(CPPFLAGS) -o $@
-		@echo $(patsubst $(GR_SRC_DIR)%, %, $<) compiled
+		@echo $(patsubst $(SRC_DIR)%, %, $<) compiled
 
-$(NAME):	$(GR_OBJS)
-		@$(CPP_LINK) $(NAME) $(GR_OBJS) $(GR_LDFLAGS)
+$(NAME):	$(OBJS)
+		@$(CPP_LINK) $(NAME) $(OBJS) $(LDFLAGS)
 		@$(ECHO_GREEN)[OK] $(NAME) linked $(END_OF_ECHO)
 
 
 clean:
-		@$(RM) $(GOBJ_DIR)
+		@$(RM) $(OBJ_DIR)
 		@$(ECHO_GREEN)[OK] Every objects have been removed $(END_OF_ECHO)
 
 fclean:		clean

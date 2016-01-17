@@ -1,38 +1,20 @@
-extern "C"
-{
-#include <lua.h>
-#include <lualib.h>
-#include <lauxlib.h>
-}
-#include <iostream>
-#include <sstream>
-
 // http://acamara.es/blog/2012/08/running-a-lua-5-2-script-from-c/
 
-int main()
+#include	"Lua.hpp"
+
+int		main()
 {
-  // new Lua state
-  std::cout << "[C++] Starting Lua state" << std::endl;
-  lua_State *lua_state = luaL_newstate();
+  Lua		lua;
 
-  // load Lua libraries
-  std::cout << "[C++] Loading Lua libraries" << std::endl;
-  static const luaL_Reg lualibs[] = 
-    {
-      {"base", luaopen_base},
-      {"io", luaopen_io},
-      {NULL, NULL}
-    };
-  const luaL_Reg *lib = lualibs;
-  for(; lib->func != NULL; lib++)
-    {
-      std::cout << " loading '" << lib->name << "'" << std::endl;
-      luaL_requiref(lua_state, lib->name, lib->func, 1);
-      lua_settop(lua_state, 0);
-    }
-
+  lua.init();
+  lua_State *lua_state = lua.getState();
   // start the arg table in Lua
   std::cout << "[C++] Creating the arg table" << std::endl;
+  lua.pushArg(1);
+  lua.pushArg(49);
+  lua.pushArg(2);
+  lua.pushArg("Life is a beach");
+  /*
   lua_createtable(lua_state, 2, 0);
   lua_pushnumber(lua_state, 1);
   lua_pushnumber(lua_state, 49);
@@ -40,6 +22,7 @@ int main()
   lua_pushnumber(lua_state, 2);
   lua_pushstring(lua_state, "Life is a beach");
   lua_settable(lua_state, -3);
+  */
   lua_setglobal(lua_state, "arg");
 
   // load the script
