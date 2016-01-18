@@ -1,82 +1,163 @@
 // http://acamara.es/blog/2012/08/running-a-lua-5-2-script-from-c/
 
+#include        <iostream>
 #include	"Lua.hpp"
 
-int		main()
+bool		helloworld()
 {
   Lua		lua;
 
-  lua.init();
-  lua_State *lua_state = lua.getState();
-  // start the arg table in Lua
-  std::cout << "[C++] Creating the arg table" << std::endl;
-  lua.pushArg(1);
-  lua.pushArg(49);
-  lua.pushArg(2);
-  lua.pushArg("Life is a beach");
-  /*
-  lua_createtable(lua_state, 2, 0);
-  lua_pushnumber(lua_state, 1);
-  lua_pushnumber(lua_state, 49);
-  lua_settable(lua_state, -3);
-  lua_pushnumber(lua_state, 2);
-  lua_pushstring(lua_state, "Life is a beach");
-  lua_settable(lua_state, -3);
-  */
-  lua_setglobal(lua_state, "arg");
+  // initialisation de l'API C Lua
+  if (!lua.init())
+    return false;
+  // ouverture du script
+  if (!lua.open("scripts/helloworld.lua"))
+    return false;
+  // lancement du script
+  if (!lua.run())
+    return false;
+  return true;
+}
 
-  // load the script
-  std::cout << "[C++] Loading the Lua script" << std::endl;
-  int status = luaL_loadfile(lua_state, "scripts/variables.lua");
-  std::cout << " return: " << status << std::endl;
+bool		args()
+{
+  Lua		lua;
 
-  // run the script with the given arguments
-  std::cout << "[C++] Running script" << std::endl;
-  int result = 0;
-  if(status == LUA_OK)
+  if (!lua.init())
+    return false;
+
+  lua.newTable(); // on déclare un nouveau tableau pour les arguments
+  lua.push(1, "arg1"); // correspond à arg[1] = "arg1"
+  lua.push(2, 42); // arg[2] = 42
+  lua.push(3, 13.37);
+  lua.push(4, true);
+  lua.push(5, "dernier argument");
+  lua.setGlobal("arg"); // on nomme la table "arg" pour la retrouver dans le script lua
+
+  if (!lua.open("scripts/args.lua"))
+    return false;
+  if (!lua.run())
+    return false;
+  return true;
+}
+
+bool	        ret()
+{
+  Lua		lua;
+
+  if (!lua.init())
+    return false;
+  if (!lua.open("scripts/ret.lua"))
+    return false;
+  if (!lua.run())
+    return false;
+
+  while (lua.stackSize()) // tant qu'il y a des variables sur la stack
     {
-      result = lua_pcall(lua_state, 0, LUA_MULTRET, 0);
-    }
-  else
-    {
-      std::cout << " Could not load the script." << std::endl;
-    }
-  if (result == LUA_OK)
-    {
-      // print the values returned from the script
-      std::cout << "[C++] Values returned from the script:" << std::endl;
-      std::stringstream str_buf;
-      while(lua_gettop(lua_state))
+      switch (lua.getType()) // on récupère le type de la variable
 	{
-	  str_buf.str(std::string());
-	  str_buf << " ";
-	  switch(lua_type(lua_state, lua_gettop(lua_state)))
-	    {
-	    case LUA_TNUMBER:
-	      str_buf << "script returned the number: "
-		      << lua_tonumber(lua_state, lua_gettop(lua_state));
-	      break;
-	    case LUA_TTABLE:
-	      str_buf << "script returned a table";
-	      break;
-	    case LUA_TSTRING:
-	      str_buf << "script returned the string: "
-		      << lua_tostring(lua_state, lua_gettop(lua_state));
-	      break;
-	    case LUA_TBOOLEAN:
-	      str_buf << "script returned the boolean: "
-		      << lua_toboolean(lua_state, lua_gettop(lua_state));
-	      break;
-	    default:
-	      str_buf << "script returned an unknown-type value";
-	    }
-	  lua_pop(lua_state, 1);
-	  std::cout << str_buf.str() << std::endl;
+	case LUA_TNUMBER:
+	  std::cout << "script returned the number: " << lua.pop<double>() << std::endl;
+	  break;
+	case LUA_TTABLE:
+	  std::cout << "script returned a table" << std::endl;
+	  lua.pop();
+	  break;
+	case LUA_TSTRING:
+	  std::cout << "script returned the string: " << lua.pop<std::string>() << std::endl;
+	  break;
+	case LUA_TBOOLEAN:
+	  std::cout << "script returned the boolean: " << lua.pop<bool>() << std::endl;
+	  break;
+	default:
+	  std::cout << "script returned an unknown-type value" << std::endl;
+	  lua.pop();
 	}
+    }  
+  return true;
+}
+
+void		print_table(Lua &lua, int tab)
+{
+  lua.push(); // on push une valeur null qui represente la fin de la table (un peu comme un \0)
+  while (lua.next()) // tant qu'il y a des valeurs dans la table
+    {
+      for (int i = 0; i < tab; i++) // ca c'est juste pour l'indentation (table dans table)
+	std::cout << ' ';
+      switch (lua.getKeyType())
+	{
+	  // on fait des lua.getKey() au lieu de lua.pop() cette fois-ci
+	case LUA_TNUMBER:
+	  std::cout << lua.getKey<double>();
+	  break;
+	case LUA_TSTRING:
+	  std::cout << lua.getKey<std::string>();
+	  break;
+	case LUA_TBOOLEAN:
+	  std::cout << lua.getKey<bool>();
+	  break;
+	default:
+	  std::cout << "unknown-type";
+	}
+      std::cout << " = ";
+      switch (lua.getValueType())
+	{
+	  // et ici on fait des lua.getValue()
+	case LUA_TNUMBER:
+	  std::cout << lua.getValue<double>() << std::endl;
+	  break;
+	case LUA_TTABLE:
+	  std::cout << std::endl;
+	  print_table(lua, tab + 2); // si la valeur est une table on rappelle la fonction #récursivité
+	  break;
+	case LUA_TSTRING:
+	  std::cout << lua.getValue<std::string>() << std::endl;
+	  break;
+	case LUA_TBOOLEAN:
+	  std::cout << lua.getValue<bool>() << std::endl;
+	  break;
+	default:
+	  std::cout << "unknown-type" << std::endl;
+	}
+      lua.pop(); // on pop la variable contenue dans la table
     }
-  else
-    std::cout << " Could not call the script" << std::endl;
-  // close the Lua state
-  std::cout << "[C++] Closing the Lua state" << std::endl;
+  std::cout << std::endl;
+}
+
+bool		table()
+{
+  Lua		lua;
+
+  if (!lua.init())
+    return false;
+  if (!lua.open("scripts/table.lua"))
+    return false;
+  if (!lua.run())
+    return false;
+
+  if (lua.getType() != LUA_TTABLE) // je vérifie si c'est une table, au cas où lol
+      return false;
+  print_table(lua, 0);
+  return true;
+}
+
+int		main()
+{
+  std::cout << "helloworld.lua:" << std::endl;
+  helloworld();
+  std::cout << std::endl;
+
+  std::cout << "args.lua:" << std::endl;
+  args();
+  std::cout << std::endl;
+
+  std::cout << "ret.lua:" << std::endl;
+  ret();
+  std::cout << std::endl;
+
+  std::cout << "table.lua:" << std::endl;
+  table();
+  std::cout << std::endl;
+
   return 0;
 }

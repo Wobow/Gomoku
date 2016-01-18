@@ -5,7 +5,7 @@
 ## Login   <bevill_a@epitech.net>
 ## 
 ## Started on  Sun Jan 17 11:31:27 2016 Alexis Bevillard
-## Last update Sun Jan 17 15:09:36 2016 Alexis Bevillard
+## Last update Mon Jan 18 10:57:08 2016 Alexis Bevillard
 ##
 
 NAME =		test_lua
@@ -17,6 +17,7 @@ LUA_LIB_DIR =	lua-5.3.2/lib/
 LUA_INC_DIR =	lua-5.3.2/include/
 
 SRCS =		$(SRC_DIR)test.cpp \
+		$(SRC_DIR)Lua.cpp \
 
 OBJS =		$(patsubst $(SRC_DIR)%, $(OBJ_DIR)%, $(SRCS:.cpp=.o))
 

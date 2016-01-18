@@ -6,15 +6,17 @@ extern "C"
 #include		<lualib.h>
 #include		<lua.h>
 }
+#include		<map>
+
 #include		<iostream>
-#include		<sstream>
 
 class			Lua
 {
-private:
+public:
+  typedef std::map<std::string, lua_CFunction> libMap;
   lua_State		*_state;
-  luaL_Reg		*_libs;
-  bool			_arg;
+  libMap		_libs;
+  size_t		_argIndex;
 
 public:
   Lua();
@@ -22,75 +24,63 @@ public:
 
   bool			init();
 
-  void			pushArg(bool b);
-  void			pushArg(int n);
-  void			pushArg(double n);
-  void			pushArg(const std::string &s);
-  //  void			push(int k, const std::string &v);
+  template <typename K, typename V>
+  void			push(K key, V value)
+  {
+    push(key);
+    push(value);
+    lua_settable(_state, -3);
+  }
+  void			push(bool b);
+  void			push(int n);
+  void			push(double n);
+  void			push(const char *s);
+  void			push(const std::string &s);
+  void			push();
+  void			newTable();
 
-  lua_State	        *getState() { return _state; }
+  template <typename T>
+  T			pop()
+  {
+    T		        var;
+
+    pop(var, lua_gettop(_state));
+    pop();
+    return var;
+  }
+  template <typename T>
+  T			getKey()
+  {
+    T			var;
+
+    pop(var, -2);
+    return var;
+  }
+  template <typename T>
+  T			getValue()
+  {
+    T			var;
+
+    pop(var, -1);
+    return var;
+  }
+  void			pop();
+
+  int			getType();
+  int			getKeyType();
+  int			getValueType();
+
+  int			stackSize();
+  bool			next();
+  void			setGlobal(const std::string &s);
+
+  bool			open(const std::string &filename);
+  bool			run();
+
+private:
+  void			pop(bool &b, int index);
+  void			pop(int &n, int index);
+  void			pop(double &d, int index);
+  void			pop(const char *&s, int index);
+  void			pop(std::string &s, int index);
 };
-
-Lua::Lua() :
-  _state(NULL),
-  _libs(NULL),
-  _arg(false)
-{
-}
-
-Lua::~Lua()
-{
-  if (_state)
-    lua_close(_state);
-  if (_libs)
-    delete[] _libs;
-}
-
-bool			Lua::init()
-{
-  // new Lua state
-  std::cout << "[C++] Starting Lua state" << std::endl;
-  if ((_state = luaL_newstate()) == NULL)
-    return false;
-
-  // load Lua libraries
-  std::cout << "[C++] Loading Lua libraries" << std::endl;
-  _libs = new luaL_Reg[3]
-    {
-      {"base", luaopen_base},
-      {"io", luaopen_io},
-      {NULL, NULL}
-    };
-
-  for(const luaL_Reg *lib = _libs; lib->func != NULL; lib++)
-    {
-      std::cout << " loading '" << lib->name << "'" << std::endl;
-      luaL_requiref(_state, lib->name, lib->func, 1);
-      lua_settop(_state, 0);
-    }
-  return true;
-}
-
-void			Lua::pushArg(bool b)
-{
-  _arg = true;
-  lua_pushboolean(_state, b);
-}
-
-void			Lua::pushArg(int n)
-{
-  _arg = true;
-  lua_pushinteger(_state, n);
-}
-
-void			Lua::pushArg(double n)
-{
-  _arg = true;
-  lua_pushnumber(_state, n);
-}
-
-void			Lua::pushArg(const std::string &s)
-{
-  _arg = true;
-  lua_pushstring(_state, s.c_str());
-}
