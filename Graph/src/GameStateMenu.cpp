@@ -8,6 +8,7 @@
 // Last update Sat Dec 12 02:49:37 2015 Thomas Trupin
 
 #include	"GameStateStart.hpp"
+#include	"GameStateIA.hpp"
 #include	"GameStateMenu.hpp"
 
 GameStateMenu::GameStateMenu(Game *game)
@@ -51,8 +52,10 @@ void	        GameStateMenu::handleInput()
 	  {
 	    if (event.key.code == sf::Keyboard::Escape)
 	      _game->_window.close();
-	    else if (event.key.code == sf::Keyboard::Space)
+	    else if (event.key.code == sf::Keyboard::Num1 || event.key.code == sf::Keyboard::Numpad1)
 	      _game->changeState(new GameStateStart(_game));
+	    else if (event.key.code == sf::Keyboard::Num2 || event.key.code == sf::Keyboard::Numpad2)
+	      _game->changeState(new GameStateIA(_game, 1));
 	    break;
 	  }
 	default:

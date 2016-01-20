@@ -26,6 +26,9 @@ GR_SRCS =	$(GR_SRC_DIR)main.cpp \
 		$(GR_SRC_DIR)TextureManager.cpp \
 		$(GR_SRC_DIR)Tile.cpp \
 		$(GR_SRC_DIR)Arbiter.cpp \
+		$(GR_SRC_DIR)GameStateIA.cpp \
+		$(GR_SRC_DIR)IA.cpp \
+
 
 GR_OBJS =	$(patsubst $(GR_SRC_DIR)%, $(GOBJ_DIR)%, $(GR_SRCS:.cpp=.o))
 
