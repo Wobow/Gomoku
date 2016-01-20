@@ -9,6 +9,7 @@
 //
 
 #include "IA.hpp"
+#include "GameStateIA.hpp"
 
 IA::IA(GameStateIA *state)
 {
@@ -22,5 +23,7 @@ IA::~IA()
 
 void	IA::play()
 {
-  
+  //  _state->getGame()->_map[x][y]->getState();
+  // Get state of map cell at (x, y);
+  _state->playTurn(rand() % 19, rand() % 19);
 }

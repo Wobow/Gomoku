@@ -28,6 +28,7 @@ public:
   virtual void	draw(const float dt);
   virtual void	update(const float dt);
   virtual void	handleInput();
+  void		playTurn(int, int);
 
 private:
   sf::View	_view;
@@ -38,6 +39,7 @@ private:
   void		loadGame();
   void		playTurn(sf::Event event);
   void		displayPreview(sf::Event event);
+  
 };
 
 #endif /*!GAMESTATEIA_H_*/

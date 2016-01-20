@@ -117,6 +117,11 @@ void		GameStateIA::playTurn(sf::Event event)
   int		abs = (event.mouseButton.x - BORDER) / TILE_W;
   int		ord = (event.mouseButton.y - BORDER) / TILE_H;
 
+  playTurn(abs, ord);
+}
+
+void		GameStateIA::playTurn(int abs, int ord)
+{
   if (0 <= abs && abs <= BOARD_W - 1 && 0 <= ord && ord <= BOARD_H - 1)
     {
       if ((_game->_map[abs][ord]->getState() == BLANK ||
@@ -146,8 +151,8 @@ void		GameStateIA::playTurn(sf::Event event)
     _ia.play();
 }
 
-  void		GameStateIA::loadGame()
-  {
-    std::cout << "newGame" << std::endl;
-    //  _game->pushState(new GameStateEditor(_game));
-  }
+void		GameStateIA::loadGame()
+{
+  std::cout << "newGame" << std::endl;
+  //  _game->pushState(new GameStateEditor(_game));
+}
