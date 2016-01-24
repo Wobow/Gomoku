@@ -10,6 +10,8 @@
 
 #include "IA.hpp"
 #include "GameStateIA.hpp"
+#include "Board.hpp"
+#include "SimpleLogic.hpp"
 
 IA::IA(GameStateIA *state)
 {
@@ -21,9 +23,15 @@ IA::~IA()
 
 }
 
-void	IA::play()
+void	IA::play(int color)
 {
+  Board b(19, _state->getGame()->_map);
+  SimpleLogic logic(b, 19);
+
+  CellState s = color == BLACK ? Black : White;
+  Point p = logic.selectBestCell(s);
+  std::cout << "Ia played at : " << p.getX() << ", " << p.getY() << std::endl;
   //  _state->getGame()->_map[x][y]->getState();
   // Get state of map cell at (x, y);
-  _state->playTurn(rand() % 19, rand() % 19);
+  _state->playTurn(p.getX(), p.getY());
 }

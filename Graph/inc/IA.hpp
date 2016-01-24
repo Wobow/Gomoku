@@ -23,7 +23,7 @@ public:
   ~IA();
 
 public:
-  void		play();
+  void		play(int color);
 
 private:
   GameStateIA	*_state;

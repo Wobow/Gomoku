@@ -148,7 +148,7 @@ void		GameStateIA::playTurn(int abs, int ord)
 	}
     }
   if (_turn != _plColor)
-    _ia.play();
+    _ia.play(_turn);
 }
 
 void		GameStateIA::loadGame()
