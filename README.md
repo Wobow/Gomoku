@@ -1,2 +1,2 @@
 # Gomoku
-Tamer
+Gomoku IA project
